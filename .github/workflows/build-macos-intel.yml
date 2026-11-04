@@ -1,0 +1,24 @@
+name: Build macOS Intel
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+      - name: Build release binary
+        run: cargo build --locked --release --target x86_64-apple-darwin
+      - name: Package binary
+        run: tar -czf tetris-macos-intel.tar.gz -C target/x86_64-apple-darwin/release tetris
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tetris-macos-intel
+          path: tetris-macos-intel.tar.gz
